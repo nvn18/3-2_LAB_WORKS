@@ -1,4 +1,5 @@
 def printSolution(X):
+    print(" _ "*len(X))
     for i in range(1,len(X)):
         print('| ', end='')
         for j in range(1, len(X)):
