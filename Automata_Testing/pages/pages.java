@@ -25,6 +25,6 @@ public class pages {
 	        submitButton.click();
 
 	        WebElement message = driver.findElement(By.id("lname"));
-	        message.getText();
+	        System.out.println(message.getText());
 	}
 }
