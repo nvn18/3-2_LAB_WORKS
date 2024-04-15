@@ -7,7 +7,7 @@ import org.openqa.selenium.support.ui.Select;
 import java.time.Duration;
 public class dropdown {
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws InterruptedException {
 		
 
         WebDriver driver = new ChromeDriver();
@@ -25,11 +25,12 @@ public class dropdown {
         
         driver.manage().timeouts().implicitlyWait(Duration.ofMillis(5000)); // delays for the 5seconds
         
-        driver.navigate().to("https://demo.guru99.com/test/newtours/register.php"); // navigates to the guru99.com
+        driver.navigate().to("https://demo.guru99.com/test/newtours/register.php"); // navigates to the jsbin.com
         WebElement country = driver.findElement(By.name("country"));
         
         Select series = new Select(country);
         series.selectByVisibleText("ANTARCTICA");
+        Thread.sleep(5000);
         series.selectByIndex(3); // selects the value in the dropdown menu by using the index
         System.out.println("Selected option in country: " + series.getFirstSelectedOption().getText());
 	}
