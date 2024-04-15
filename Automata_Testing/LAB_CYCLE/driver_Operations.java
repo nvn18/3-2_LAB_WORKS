@@ -19,7 +19,7 @@ public class driver_Operations{
         String current_url = driver.getCurrentUrl();// picks up the current url of the webpage
         System.out.println("The current Url is:"+current_url);
         
-        driver.manage().timeouts().implicitlyWait(Duration.ofMillis(5000));//delays for the 2seconds
+        driver.manage().timeouts().implicitlyWait(Duration.ofMillis(5000));//delays for the 5seconds
         
         driver.navigate().to("https://www.lambdatest.com/selenium-playground/input-form-demo");//navigates to lambda testwebsite
         
