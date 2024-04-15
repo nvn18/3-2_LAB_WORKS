@@ -7,7 +7,7 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.support.ui.Select;
 
 public class frames {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws InterruptedException  {
 
         // Create a new instance of ChromeDriver
         WebDriver driver = new ChromeDriver();
@@ -17,7 +17,7 @@ public class frames {
  
         WebElement mainIframe = driver.findElement(By.id("name"));
         mainIframe.sendKeys("main"); // Enterning the Text to main frame
-       
+        Thread.sleep(5000); 
         driver.switchTo().frame("frm1"); // swtiching to the frame1
         
         WebElement w = driver.findElement(By.id("course")); // In the frame1 selecting the dropdown menu
