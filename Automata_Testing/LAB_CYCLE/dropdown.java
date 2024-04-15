@@ -25,13 +25,13 @@ public class dropdown {
         
         driver.manage().timeouts().implicitlyWait(Duration.ofMillis(5000)); // delays for the 5seconds
         
-        driver.navigate().to("https://output.jsbin.com/vijititupo"); // navigates to the jsbin.com
-        WebElement anime = driver.findElement(By.id("Anime"));
+        driver.navigate().to("https://demo.guru99.com/test/newtours/register.php"); // navigates to the guru99.com
+        WebElement country = driver.findElement(By.name("country"));
         
-        Select series = new Select(anime);
-        series.selectByVisibleText("Naruto");
+        Select series = new Select(country);
+        series.selectByVisibleText("ANTARCTICA");
         series.selectByIndex(3); // selects the value in the dropdown menu by using the index
-        System.out.println("Selected option in anime: " + series.getFirstSelectedOption().getText());
+        System.out.println("Selected option in country: " + series.getFirstSelectedOption().getText());
 	}
 
 }
