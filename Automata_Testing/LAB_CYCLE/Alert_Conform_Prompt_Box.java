@@ -33,7 +33,7 @@ public class alert_box {
         String ConformText = alert.getText();// Get the text from the conform dialog
         System.out.println("Conform Text: " + ConformText);
         Thread.sleep(3000);
-        alert.accept();// Accept the alert (Clicking OK)
+        conform.accept();// Accept the alert (Clicking OK)
         System.out.println("The Conform Text output :"+driver.findElement(By.id("output")).getText());
         Thread.sleep(3000);
         
@@ -44,7 +44,7 @@ public class alert_box {
         System.out.println("Prompt Request Text: " + PromptText);
         prompt.sendKeys("Neeraj");
         Thread.sleep(3000);
-        alert.accept();// Accept the alert (Clicking OK)
+        prompt.accept();// Accept the alert (Clicking OK)
         System.out.println("The Prompt Text output :"+driver.findElement(By.id("output")).getText());
         Thread.sleep(3000);
         
