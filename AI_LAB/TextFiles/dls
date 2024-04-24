@@ -1,0 +1,38 @@
+def DLS(graph, node, goal, limit):
+    if node == goal:
+        return 'GOAL'
+    elif limit == 0:
+        return 'LIMIT'
+    else:
+        cutoff = False
+        print(node, end=' ')
+        for neighbour in graph[node]:
+            result = DLS(graph, neighbour, goal, limit-1)
+            if result == 'LIMIT':
+                cutoff = True
+            elif result != 'FAIL':
+                return result
+        return 'LIMIT' if cutoff else 'FAIL'
+graph={
+    'A':['B','C'],
+    'B':['D','E'],
+    'C':['F'],
+    'D':['G','H'],
+    'E':[],
+    'F':['I','K'],
+    'G':[],
+    'H':['L'],
+    'I':[],
+    'K':['M'],
+    'L':[],
+    'M':[]
+}
+start_node = input("enter the starting node:")
+limit = int(input("enter the limit:"))
+goal = input("enter the goal node")
+
+res = DLS(graph, start_node, goal, limit)
+if res == 'GOAL':
+    print("\nfound")
+else:
+    print("not found")
