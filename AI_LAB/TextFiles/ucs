@@ -1,0 +1,46 @@
+def UCS(graph, start, goal):
+    frontier = {start:0}
+    explored = []
+
+    while True:
+        if len(frontier) == 0:
+            return 'FAIL'
+
+        node = min(frontier, key=frontier.get)
+        value = frontier[node]
+        print(node, " : ", value)
+
+        del frontier[node]
+
+        if goal == node:
+            return value
+        explored.append(node)
+
+        for neighbour, pathCost in graph[node].items():
+            if neighbour not in explored or neighbour not in frontier:
+                frontier.update({neighbour : value + pathCost})
+            elif neighbour in frontier and pathCost > value:
+                frontier.update({neighbour: value})
+            print("The frontier Sequence:",frontier)
+            print("The explored sequence:",explored)
+graph = {0: {1: 99, 2: 80},
+         1: {4: 211},
+         2: {3: 97},
+         3: {4: 101},
+         4: {}}
+
+start_node = int(input("Enter the start node: "))
+goal_node = int(input("Enter the goal node: "))
+
+if start_node not in graph:
+    print(f"\n{start_node} is not in the graph.")
+elif goal_node not in graph:
+    print(f"\n{goal_node} is not in the graph.")
+else:
+    print(f"\nCosts from {start_node} to: ")
+    result = UCS(graph, start_node, goal_node)
+
+    if result == "FAIL":
+        print("\nGoal node not reached.")
+    else:
+        print(f"\nGoal reached with cost: {result}")
