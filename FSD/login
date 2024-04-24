@@ -1,0 +1,32 @@
+const express = require('express');
+const bodyParser = require('body-parser');
+const app = express();
+const PORT = 4000;
+app.use(bodyParser.urlencoded({ extended: true }));
+app.get('/login', (req, res) => {
+    res.send(`
+        <h1>Login</h1>
+        <form action="/login" method="POST">
+            <label for="username">Username:</label>
+            <input type="text" id="username" name="username"><br>
+            <label for="password">Password:</label>
+            <input type="password" id="password" name="password"><br><br>
+            <button type="submit">Login</button>
+        </form>
+    `);
+});
+app.post('/login', (req, res) => {
+    const { username, password } = req.body;
+    if (username && password) {
+        if (username === 'nvn' && password === 'emma') {
+            res.send('<h1>Login Successful!</h1>');
+        } else {
+            res.send('<h1>Invalid Login Credentials</h1>');
+        }
+    } else {
+        res.send('<h1>Please enter both username and password</h1>');
+    }
+});
+app.listen(PORT, () => {
+    console.log(`Server is running on http://localhost:${PORT}`);
+});
