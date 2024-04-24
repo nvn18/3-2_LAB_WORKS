@@ -1,0 +1,63 @@
+def suck(s,p):
+    if s[0]==0 and p=='L':
+        return s
+    elif s[1]==0 and p=='R':
+        return s
+    elif s[0]==1 and p=='L':
+        return [0,s[1]]
+    else:
+        return [s[0],0]
+
+def check(i):
+    l=[]
+    for j in d:
+        l.append([d[j]['state'],d[j]['pos']])
+    for v in l:
+        if v==i:
+            return False
+    return True
+position=input("enter the pos of the vaccum cleaner")
+room1=int(input("enter wether the left box contains dirt 1/0?"))
+room2=int(input("enter wether the right box has dirt 1/0?"))
+d={0:{'state':[room1,room2],'pos':position,'parent':None}}
+frontier,explored,Ex=[0],[],[]
+
+k=0
+while frontier:
+    n=frontier.pop(0)
+    explored.append(n)
+    s=d[n]['state']
+    p=d[n]['pos']
+    Ex.append([s,p])
+    if (s==[0,0] and p=='L') or (s==[0,0] and p=='R'):
+        print('the explored found : ',explored)
+        break
+    l=[]
+    if p=='L':
+        l.append([suck(s,p),'L'])
+        l.append([s,'R'])
+    elif p=='R':
+        l.append([suck(s,p),'R'])         
+        l.append([s,'L'])
+    for i in l:
+        if check(i):
+            k+=1
+            d.update({k:{'state':i[0],'pos':i[1],'parent':n}})
+            frontier.append(k)
+l=[]
+if explored[-1]==n:
+    while d[n]['parent']!=None:
+        l.append(n)
+        n=d[n]['parent']
+    l.append(0)
+    for i in l[::-1]:
+        print(d[i])
+else:
+    print('path not found')
+    
+print()
+print(l[::-1])  
+print('frontier = ',frontier)
+print("The exploration Path:")
+for i in Ex:
+    print(i)
