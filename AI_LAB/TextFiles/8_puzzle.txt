@@ -1,0 +1,89 @@
+import copy
+start=[[2,8,3],[1,6,4],[7,None,5]]
+goal=[[1,2,3],[8,None,4],[7,6,5]]
+def cal_huer(l):
+    c=0
+    for i in range(3):
+        for j in range(3):
+            if l[i][j]!=goal[i][j]:
+                c+=1
+    return c
+v=cal_huer(start)
+d={0:{'val':start,'p':0,'h':v,'f':0+v}}
+k=0
+def check(val):
+    for i in d:
+        if d[i]['val']==val:
+            return False
+    return True
+
+def change(v,i,j,k,l):
+    val=copy.deepcopy(v)
+    temp=val[i][j]
+    val[i][j]=None
+    val[k][l]=temp
+    return val  
+flag=0
+frontier,explored=[0],[]
+while frontier :
+    print('frontier = ',frontier)
+    print('explored = ',explored)
+    n=frontier.pop(0)
+    v=d[n]['val']
+    if v==goal:
+        flag=1
+        explored.append(n)
+        print("the path found ",explored)
+        break
+    p=d[n]['p']
+    l=[]
+    if v[1][1]==None:
+        l.append(change(v,0,1,1,1))
+        l.append(change(v,1,0,1,1))
+        l.append(change(v,1,2,1,1))
+        l.append(change(v,2,1,1,1))
+    elif v[0][0]==None:
+        l.append(change(v,1,0,0,0))
+        l.append(change(v,0,1,0,0))
+    elif v[0][2]==None:
+        l.append(change(v,1,2,0,2))
+        l.append(change(v,0,1,0,2))
+    elif v[2][0]==None:
+        l.append(change(v,1,0,2,0))
+        l.append(change(v,2,1,2,0))
+    elif v[2][2]==None:
+        l.append(change(v,1,2,2,2))
+        l.append(change(v,2,1,2,2))
+    elif v[0][1]==None:
+        l.append(change(v,0,0,0,1))
+        l.append(change(v,0,2,0,1))
+        l.append(change(v,1,1,0,1))
+    elif v[1][0]==None:
+        l.append(change(v,0,0,1,0))
+        l.append(change(v,2,0,1,0))
+        l.append(change(v,1,1,1,0))
+    elif v[1][2]==None:
+        l.append(change(v,0,2,1,2))
+        l.append(change(v,2,2,1,2))
+        l.append(change(v,1,1,1,2))
+    else:
+        l.append(change(v,2,0,2,1))
+        l.append(change(v,2,2,2,1))
+        l.append(change(v,1,1,2,1))
+
+    for val in l:
+        if check(val):
+            k+=1
+            h_val=cal_huer(val)
+            d1={k:{'val':val,'p':p+1,'h':h_val,'f':p+1+h_val}}
+            d.update(d1)
+            frontier.append(k)
+   
+    explored.append(n)
+    d.pop(n)
+    z=[]
+   
+    for i in frontier:
+        value=d[i]['f']
+        z.append((value,i))
+    frontier=[x for _,x in sorted(z)]
