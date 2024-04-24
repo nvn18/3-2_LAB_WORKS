@@ -1,0 +1,91 @@
+def check(fromSide, toSide, m, c):
+    if fromSide[0] in range(0, m + 1) and toSide[0] in range(0, m + 1) and \
+        fromSide[1] in range(0, c + 1) and toSide[1] in range(0, c + 1):
+        if fromSide[0] + toSide[0] == m and fromSide[1] + toSide[1] == c:
+            if fromSide[0] !=0 and toSide[0] != 0 and fromSide[0] >= fromSide[1] and toSide[0] >= toSide[1]:
+                return True
+            elif fromSide[0] ==0 and toSide[0] != 0  and toSide[0] >= toSide[1]:
+                return True
+            elif fromSide[0] !=0 and toSide[0] == 0 and fromSide[0] >= fromSide[1]:
+                return True
+    return False
+
+def generateStates(leftBank, rightBank, m, c):
+    if leftBank[-1] == 1:
+        fromSide, toSide = leftBank, rightBank
+    else:
+        fromSide, toSide = rightBank, leftBank
+
+    states = []
+    
+    # sending two missionaries
+    if check([fromSide[0]-2, fromSide[1], 0], [toSide[0]+2, toSide[1], 1], m, c):
+        states.append([[fromSide[0]-2, fromSide[1], 0], [toSide[0]+2, toSide[1], 1]])
+    
+    # sending one missionary and one cannibal
+    if check([fromSide[0]-1, fromSide[1]-1, 0], [toSide[0]+1, toSide[1]+1, 1], m, c):
+        states.append([[fromSide[0]-1, fromSide[1]-1, 0], [toSide[0]+1, toSide[1]+1, 1]])
+
+    # sending two cannibals
+    if check([fromSide[0], fromSide[1]-2, 0], [toSide[0], toSide[1]+2, 1], m, c):
+        states.append([[fromSide[0], fromSide[1]-2, 0], [toSide[0], toSide[1]+2, 1]])
+
+    # sending one missionary
+    if check([fromSide[0]-1, fromSide[1], 0], [toSide[0]+1, toSide[1], 1], m, c):
+        states.append([[fromSide[0]-1, fromSide[1], 0], [toSide[0]+1, toSide[1], 1]])
+
+    # sending one cannibal
+    if check([fromSide[0], fromSide[1]-1, 0], [toSide[0], toSide[1]+1, 1], m, c):
+        states.append([[fromSide[0], fromSide[1]-1, 0], [toSide[0], toSide[1]+1, 1]])
+    
+    # Sending one Missionary and two Cannibals:
+    if check([fromSide[0]-1, fromSide[1]-2, 0],[toSide[0]+1, toSide[1]+2, 1],m,c):
+        states.append([[fromSide[0]-1, fromSide[1]-2, 0],[toSide[0]+1, toSide[1]+2, 1]])
+
+    # Sending two Missionaries and one Cannibal:
+    if check([fromSide[0]-2, fromSide[1]-1, 0],[toSide[0]+2, toSide[1]+1, 1],m,c):
+        states.append([[fromSide[0]-2, fromSide[1]-1, 0],[toSide[0]+2, toSide[1]+1, 1]])
+
+
+    if leftBank[-1] == 0:
+        return [x[::-1] for x in states]
+        
+    return states
+
+def MCP(search,m, c):
+    initialState = [[m, c, 1], [0, 0, 0]]
+    goalState = [[0, 0, 0], [m, c, 1]]
+    
+    explored = [initialState]
+    frontier = [initialState]
+    
+    if search == "BFS":
+        poppings = 0
+    elif search == "DFS":
+        poppings = -1
+
+    while frontier:
+        node = frontier.pop(poppings)
+
+        if node == goalState:
+            return explored
+
+        states = generateStates(node[0], node[1], m, c)
+        
+        for new_state in states:
+            if new_state not in explored:
+                explored += [new_state]
+                frontier += [new_state]
+                
+    return None
+m = int(input("Enter the number of Missionaries: "))
+c = int(input("Enter the number of Cannibals: "))
+search = input("Enter the Search Algorithm :(BFS/DFS)")
+solution = MCP(search,m, c)
+
+if solution:
+    print("Goal state reached.")
+    for state in solution:
+        print(state)
+else:
+    print("Goal state not reached.")
