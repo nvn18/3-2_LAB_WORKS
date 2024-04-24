@@ -1,0 +1,36 @@
+def solve_cryptarithmetic(puzzle):
+    letters = list(set(char for word in puzzle for char in word))
+    letters.remove(puzzle[2][0])
+    letter_to_digit = {}
+    letter_to_digit[puzzle[2][0]] = 1
+    
+    def backtrack(index):
+        if index == len(letters):
+            if is_valid():
+                return True
+            return False
+
+        for digit in [0,2,3,4,5,6,7,8,9]:
+            if digit not in letter_to_digit.values():
+                letter_to_digit[letters[index]] = digit
+
+                if backtrack(index + 1):
+                    return True
+
+                del letter_to_digit[letters[index]]
+
+        return False
+
+    def is_valid():
+        numeric_puzzle = [int(''.join([str(letter_to_digit[char]) for char in word])) for word in puzzle[:-1]]
+        return sum(numeric_puzzle) == int(''.join([str(letter_to_digit[char]) for char in puzzle[-1]]))
+
+    if backtrack(0):
+        return letter_to_digit
+    else:
+        return None
+puzzle_example = [x for x in input().split()]
+solution = solve_cryptarithmetic(puzzle_example)
+for i in solution:
+    print(i)
+print(solution)
