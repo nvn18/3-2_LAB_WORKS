@@ -1,0 +1,61 @@
+def BFS(direction, graph, frontier, explored):
+    d = 'c' if direction=='F' else 'p'
+
+    node = frontier.pop(0)
+    
+    for child in graph.get(node, []).get(d, []):
+        if child not in explored:
+            frontier += [child]
+            explored += [child]
+                
+    return frontier, explored
+
+def intersecting(exploredF, exploredB):
+    intersect = set(exploredF).intersection(set(exploredB))
+    return list(intersect)[0] if intersect else -1
+
+def BidirectionalSearch(graph, source, destination):
+    frontierF = [source]
+    exploredF = [source]
+    
+    frontierB = [destination]
+    exploredB = [destination]
+
+    while frontierF and frontierB:
+        frontierF, exploredF = BFS('F', graph, frontierF, exploredF)
+        frontierB, exploredB = BFS('B', graph, frontierB, exploredB)
+        
+        print("FF:",frontierF)
+        print("eF:",exploredF)
+        print("Fb:",frontierB)
+        print("eb:",exploredB)
+        intersectingNode = intersecting(exploredF, exploredB)
+
+        if intersectingNode != -1:
+            print("\nGoal node found.\n\nPath: ", end="")
+            path = exploredF[:-1] + exploredB[::-1]
+            for i in path:
+                print(i, end=" ")
+            return
+            
+    print("Goal node not found.")
+graph = {0: {'c': [4], 'p':[]},
+         1: {'c': [4], 'p':[]},
+         2: {'c': [5], 'p':[]},
+         3: {'c': [5], 'p':[]},
+         4: {'c': [6], 'p':[0, 1]},
+         5: {'c': [6], 'p':[2, 3]},
+         6: {'c': [7], 'p':[4, 5]},
+         7: {'c': [8], 'p':[6]},
+         8: {'c': [9, 10], 'p': [7]},
+         9: {'c': [11, 12], 'p': [8]},
+         10: {'c': [13, 14], 'p': [8]},
+         11: {'c': [], 'p': [9]},
+         12: {'c': [], 'p': [9]},
+         13: {'c': [], 'p': [10]},
+         14: {'c': [], 'p': [10]}}
+
+start_node = int(input("Enter the start node: "))
+goal_node = int(input("Enter the goal node: "))
+
+BidirectionalSearch(graph, start_node, goal_node)
