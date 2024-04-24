@@ -1,0 +1,74 @@
+def main():
+    graph = {0: {'value': [first_block, second_block], 'position': vacuum_position, 'descendants': [], 'parent': None}}
+    frontier, explored = [0], []
+    reached = []
+    node_count = 0
+
+    def check_and_update(value, position, node):
+        nonlocal node_count
+        if value == [0, 0]:
+            node_count += 1
+            graph.update({node_count: {'value': value, 'position': position, 'descendants': [], 'parent': node}})
+            graph[node]['descendants'].append(node_count)
+            frontier.append(node_count)
+            return
+
+        for i in graph:
+            if graph[i]['value'] == value and graph[i]['position'] == position:
+                return
+        node_count += 1
+        graph.update({node_count: {'value': value, 'position': position, 'descendants': [], 'parent': node}})
+        graph[node]['descendants'].append(node_count)
+        frontier.append(node_count)
+
+    def suck_and_check(value, position):
+        if position == 'L':
+            if value[0] == 1:
+                check_and_update([0, value[1]], 'L', node)
+            if value[0] == 1 and value[1] == 1:
+                check_and_update([0, 0], 'L', node)
+            if value[0] == 0:
+                pass
+            if value[0] == 0:
+                check_and_update([1, value[1]], 'L', node)
+        if position == 'R':
+            if value[1] == 1:
+                check_and_update([value[0], 0], 'R', node)
+            if value[0] == 1 and value[1] == 1:
+                check_and_update([0, 0], 'R', node)
+            if value[1] == 0:
+                pass
+            if value[1] == 0:
+                check_and_update([value[0], 1], 'R', node)
+
+    while frontier:
+        node = frontier.pop(0)
+        if graph[node]['value'] == [0, 0]:
+            reached.append(node)
+            continue
+        position = graph[node]['position']
+        value = graph[node]['value']
+        if position == 'L':
+            check_and_update(value, 'R', node)
+            suck_and_check(value, 'L')
+        if position == 'R':
+            check_and_update(value, 'L', node)
+            suck_and_check(value, 'R')
+        explored.append(node)
+
+    for i in reached:
+        print("Path:")
+        path = []
+        current_node = i
+        while current_node:
+            path.append(current_node)
+            current_node = graph[current_node]['parent']
+        path.append(0)
+        print(path[::-1])
+
+    print('Explored nodes: ', explored)
+if __name__ == "__main__":
+    first_block = int(input("Enter whether the 1st block contains dirt - Enter 1 for yes and 0 for No: "))
+    second_block = int(input("Enter whether the second block contains dirt - Enter 1 for yes and 0 for No: "))
+    vacuum_position = input("Enter the position of the vacuum cleaner - Enter the letter in Caps(L or R): ")
+    main()
