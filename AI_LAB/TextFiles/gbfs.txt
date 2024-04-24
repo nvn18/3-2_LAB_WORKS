@@ -1,0 +1,93 @@
+Area_dis_path = {
+    'A': {'S': 140, 'T': 118, 'Z': 75},
+    'B': {'F': 211, 'G': 90, 'P': 101, 'U': 85},
+    'C': {'D': 120, 'P': 138, 'R': 146},
+    'D': {'C': 120, 'M': 75},
+    'E': {'H': 86},
+    'F': {'B': 211, 'S': 99},
+    'G': {'B': 90},
+    'H': {'E': 86, 'U': 98},
+    'I': {'N': 87, 'V': 92},
+    'L': {'M': 70, 'T': 111},
+    'M': {'D': 75, 'L': 70},
+    'N': {'I': 87},
+    'O': {'S': 151, 'Z': 71},
+    'P': {'B': 101, 'C': 138, 'R': 97},
+    'R': {'C': 146, 'P': 97, 'S': 80},
+    'S': {'A': 140, 'F': 99, 'O': 151, 'R': 80},
+    'T': {'A': 118, 'L': 111},
+    'U': {'B': 85, 'H': 98, 'V': 142},
+    'V': {'I': 92, 'U': 142},
+    'Z': {'A': 75, 'O': 71}
+}
+
+hSLD = {'A': 366, 'B': 0, 'C': 160, 'D': 242, 'E': 161, 'F': 176, 'G': 77,
+        'H': 151, 'I': 226, 'L': 244, 'M': 241, 'N': 234, 'O': 380, 'P': 100,
+        'R': 193, 'S': 253, 'T': 329, 'U': 80, 'V': 199, 'Z': 374
+       }
+# greedy best frst search
+def GBFS(problem,h,intial,goal):
+    node = intial
+    frontier = {intial :h[intial]}
+    explored = [intial]
+    
+    while True:
+        node = min(frontier, key = frontier.get)
+        print(node,':',frontier[node])
+
+        del frontier[node]
+        
+        if(node == goal):
+            
+            return True
+        for neghi in problem[node]:
+            if neghi not in explored:
+                explored.append(neghi)
+                frontier[neghi] = h[neghi]
+            
+    return False
+        
+        
+        
+start_node = input("enter the Starting Node:")
+goal_node   =   input("enter the Goal Node:")
+
+result = GBFS(Area_dis_path,hSLD,start_node,goal_node)
+if result:
+    print("Goal node Reached")
+else:
+    print("Goal node is not Reached")
+# A* Algorithm
+def Astar_Algorithm(problem , h , intial , goal):
+    node = intial
+    frontier = {intial:h[intial]+0}
+    pa_Cost  = {node : 0}
+    explored = set(node)
+    
+    while True:
+        node = min(frontier, key = frontier.get)
+        value = frontier[node]
+        print(node,":",value)
+        
+        del frontier[node]
+        
+        if node == goal:
+            return True
+        for child in problem[node]:
+            if child not in explored or child not in frontier:
+                explored.add(child)
+                pa_Cost[child] = pa_Cost[node] + problem[node][child]
+                frontier[child] = pa_Cost[child] + h[child]
+            elif child in frontier and problem[node][child] + pa_Cost[node] + h[child] < frontier[child]:
+                pa_Cost[child] = pa_Cost[node] + problem[node][child]
+                frontier[child] = pa_Cost[child] + h[child]
+                
+    return False
+    
+Start_node = input("Enter the starting Node:")
+goal_node = input("enter the Goal Node:")
+result = Astar_Algorithm(Area_dis_path , hSLD , Start_node , goal_node)
+if result:
+    print("Goal Node is reached")
+else:
+    print("Goal Node is Not Reached")
