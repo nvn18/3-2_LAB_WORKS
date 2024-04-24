@@ -1,0 +1,45 @@
+def DFS(graph, start, goal):
+    explored = [start]
+    frontier = [start]
+    traversal = []
+
+    print()
+    print(f"Frontier: {frontier}")
+    print(f"Explored: {explored}")
+
+    while frontier:
+        node = frontier.pop()
+
+        print()
+        print(f"Frontier: {frontier}")
+        print(f"Explored: {explored}")
+
+        if node in graph:
+            traversal += [node]
+
+        if node == goal:
+            return True, traversal
+
+        for neighbour in graph.get(node, []):
+            if neighbour not in explored:
+                explored += [neighbour]
+                frontier += [neighbour]
+
+    return False, traversal
+graph = {0:[1,2],
+         1:[0,2,3],
+         2:[0,1,4],
+         3:[1,4],
+         4:[2,3]}
+
+start_node = int(input("Enter the start node: "))
+goal_node = int(input("Enter the goal node: "))
+
+found, traversal = DFS(graph, start_node, goal_node)
+
+if found:
+    print("\nGoal node found.\n\nPath: ",end="")
+    for i in traversal:
+        print(i,end=" ")
+else:
+    print("\nGoal node not found.")
