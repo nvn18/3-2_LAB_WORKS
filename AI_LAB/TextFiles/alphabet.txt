@@ -1,0 +1,40 @@
+import math
+def alpha_beta(game,state):
+    
+    def maxValue(game, state, alpha, beta):
+            if state not in game:
+                return state
+            v = -math.inf
+            for a in game[state]:
+                v = max(v, minValue(game, a, alpha, beta))
+                if v >= beta:
+                    return v
+                alpha = max(alpha, v)
+            print(f"State:{state}, V={v}, Alpha={alpha}, Beta={beta}")
+            return v
+        
+        
+    def minValue(game,state,alpha,beta):
+        if state not in game:
+            return state
+        v = math.inf
+        for a in game[state]:
+            v = min(v,maxValue(game,a,alpha,beta))
+            if v<=alpha:
+                return v
+            beta = min(beta,v)
+        print(f"State:{state}, V={v}, Alpha={alpha}, Beta={beta}")
+        return v
+    
+    
+    global alpha
+    global beta
+    
+    alpha = -math.inf
+    beta = math.inf
+    
+    v = maxValue(game,state,alpha,beta)
+    return v
+node = input("Enter the Node value according to graph:")
+result = alpha_beta(graph,node)
+print("The Final Optimal Value is:",result)
