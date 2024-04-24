@@ -1,0 +1,61 @@
+def generateStates(state, cap1, cap2):
+    x, y = state
+    # generate all possible successor states
+    states = []
+    if x < cap1:
+        states.append((cap1, y)) 
+    if y < cap2:
+        states.append((x, cap2)) 
+    if x > 0:
+        states.append((0, y)) 
+    if y > 0:
+        states.append((x, 0)) 
+    if x+y <= cap1 and y > 0:
+        states.append((x+y, 0)) 
+    if x+y <= cap2 and x > 0:
+        states.append((0, x+y)) 
+    if x+y >= cap1 and y > 0: 
+        states.append((cap1, x+y-cap1)) 
+    if x+y >= cap2 and x > 0:
+        states.append((x+y-cap2, cap2))
+    return states
+def water_jug_problem(search, cap1, cap2, target):
+    state = (0, 0)
+    reached = {state:None}
+    frontier = [state]
+
+    if search == 'BFS':
+        popping = 0
+    elif search == 'DFS':
+        popping = -1
+    
+    while frontier:
+        state = frontier.pop(popping)
+        if state == (target, 0) or state == (0, target):
+            # goal state reached
+            path = []
+            while state:
+                path.append(state)
+                state = reached[state]
+            path.reverse()
+            return path
+
+        states = generateStates(state, cap1, cap2)
+            
+        for new_state in states:
+            if new_state not in reached:
+                reached[new_state] = state
+                frontier.append(new_state)
+    return None
+cap1 = int(input("Enter capacity of first jug: "))
+cap2 = int(input("Enter capacity of second jug: "))
+target = int(input("Enter target volume: "))
+algo = input("BFS / DFS: ")
+path = water_jug_problem(algo, cap1, cap2, target)
+
+if path is None:
+    print("No solution found.")
+else:
+    print("Solution path")
+    for state in path:
+        print(state)
