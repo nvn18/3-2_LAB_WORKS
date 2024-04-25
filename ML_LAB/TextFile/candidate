@@ -1,0 +1,34 @@
+import pandas as pd
+df = pd.read_csv('./enjoySport.csv')
+def specialize(s,i):
+    if s[0] == None:
+        s = list(df.iloc[0,:-1])
+        return s
+    if df.iloc[i,-1] == 'yes':
+        for j in range(len(s)):
+            if s[j] != df.iloc[i,j]:
+                s[j] = '?'
+    return s
+def generalize(s,gen,index):
+    print(s)
+    for i in range(len(s)):
+        if s[i] != df.iloc[index,i] and s[i] != '?':
+            g = ['?']*6
+            g[i] = s[i]
+            gen.append(g)
+    return gen
+s = [None]*6
+gen = []
+for i in range(len(df)):
+    if df.iloc[i,-1] == 'yes':
+        s = specialize(s,i)
+    else:
+        gen = generalize(s,gen,i)
+final_gen = []
+for i in gen:
+    for j,k in zip(range(len(i)),range(len(s))):
+        if i[j] != '?':
+            if s[k] == i[j]:
+                final_gen.append(i)
+print(final_gen)
+print(s)
