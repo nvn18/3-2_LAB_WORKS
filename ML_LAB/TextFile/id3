@@ -1,0 +1,50 @@
+import pandas as pd
+import numpy as np
+import math
+df = pd.read_csv('play_tennis.csv')
+df=df.drop("day",axis=1)
+df
+def entropy(s):
+    p = s.loc[s['play']=='Yes']
+    n = s.loc[s['play']=='No']
+    entropy = 0
+    if (p.shape[0] == 0 or n.shape[0] == 0):
+        return 0
+    entropy = -p.shape[0] / s.shape[0] * math.log2(p.shape[0]/s.shape[0]) - \
+                n.shape[0]/s.shape[0] * math.log2(n.shape[0]/s.shape[0])
+    return entropy
+def gain(s, a):
+    gain = entropy(s)
+    for value in s[a].unique():
+        gain -= (s[s[a]==value].shape[0] / s.shape[0]) * entropy(s[s[a]==value])
+    return gain
+attributes = set(df.columns[:-1])
+
+display(attributes)
+def id3(X, target, attrs):
+    tree = {}
+    targetCounts = X[target].value_counts()
+    
+    if X['play'].eq('Yes').all():
+        return 'Yes'
+    elif X['play'].eq('No').all():
+        return 'No'
+    elif len(attrs) == 0:
+        return 'Yes' if targetCounts['Yes'] > targetCounts['No'] else 'No'
+    else:
+        gains = [gain(X, a) for a in attrs]
+        best = attrs[gains.index(max(gains))]
+        tree = {best: {}}
+        attrs.remove(best)
+        for v in X[best].unique():
+            xv = X.loc[X[best]==v]
+            if len(xv) == 0:
+                tree[best].update({v: 'Yes' if targetCounts['Yes'] > targetCounts['No'] else 'No'})
+            tree[best].update({v: id3(xv, target, attrs)})
+    return tree
+data=df
+target = "play"
+att = list(df.columns[:-1])
+
+tree = id3(data,target,att)
+display(tree)
