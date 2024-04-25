@@ -1,0 +1,61 @@
+import numpy as np
+import pandas as pd
+data = pd.read_csv('NN.csv')
+data
+def NerualNetworks(training,target,weights,layers,n=0.95):
+    for unit in weights:
+        print(unit,":",end=" ")
+        print(weights[unit])
+    print("*************************")
+    training  = training/ np.amax(training,axis=0)
+    target=target / 100
+    epochs = 5
+    for row in range(len(training)):
+        inputs,outputs,erros = [0]*5,[0]*5,[0]*5
+        inputs[0],inputs[1] = training[row][0] , training[row][1]
+        
+        print(f"Normalized INputs:{training[row]}")
+        print(f"Excepted Normalized Inputs:{target[row]}")
+        
+        for epoch in range(epochs):
+            for i in layers.get('input',[]):
+                outputs[i] = inputs[i]
+                
+            for j in layers.get('hidden',[]):
+                inputs[j] = sum([weights[i][j]*outputs[i] for i in layers['input']]) + bais[j]
+                outputs[j] = 1.0/(1+np.exp(-inputs[i]))
+                
+            for k in layers.get('output',[]):
+                inputs[k] = sum([weights[j][k]*outputs[j] for j in layers['hidden']]) + bais[k]
+                outputs[k] = 1.0/(1+np.exp(-inputs[k]))
+                erros[k] = outputs[k]*(1-outputs[k]) * (target[i] - outputs[k])
+            for i in layers.get("hidden",[]):
+                erros[i] = outputs[i]*(1-outputs[i])*sum([erros[j]*weights[i][j] for j in layers.get("ouput",[])])
+            for i in weights:
+                for j in weights[i]:
+                    dw = n*erros[j]*outputs[i]
+                    weights[i][j]+=dw
+            for i in layers["output"] + layers["hidden"]:
+                db = n* erros[i]
+                bais[i] += db
+        print(f"After epoch {epochs}")
+        print(f"output: {outputs[4]}")
+training = data[['x','y']].to_numpy()
+target = data['target'].to_numpy()
+layers ={'input':[0,1],'hidden':[2,3],'output':[4]}
+weights={}
+
+for i in layers.get('input',[]):
+    d={}
+    for j in layers.get('hidden',[]):
+        d[j] = np.random.uniform(-1,1)
+    weights[i] = d
+for i in layers.get('hidden',[]):
+    d={}
+    for j in layers.get('output',[]):
+        d[j] = np.random.uniform(-1,1)
+    weights[i] = d
+
+bais = np.random.uniform(low=-1,high=1,size=(5,))
+
+NerualNetworks(training,target,weights,layers, n = 0.95)
