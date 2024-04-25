@@ -1,0 +1,67 @@
+import pandas as pd
+import numpy as np
+from sklearn.model_selection import train_test_split
+df = pd.read_csv('./text_classification.csv')
+X, Y = df['Text'], df['label']
+
+x_train, x_test, y_train, y_test = train_test_split(X, Y, shuffle=False)
+vocabulary = []
+for row in range(x_train.shape[0]):
+    vocabulary.extend(x_train.iloc[row].lower().split())
+vocabulary = sorted(list(set(vocabulary)))
+probPos = y_train[y_train=='pos'].count() / y_train.count()
+probNeg = y_train[y_train=='neg'].count() / y_train.count()
+textPos = []
+for t in x_train[y_train=='pos']:
+    textPos.extend(t.lower().split())
+textPos = sorted(textPos)
+nPos = len(set(textPos))
+textNeg = []
+for t in x_train[y_train=='neg']:
+    textNeg.extend(t.lower().split())
+textNeg = sorted(textNeg)
+nNeg = len(set(textNeg))
+wordProbs = {}
+for word in vocabulary:
+    positive = (textPos.count(word)+1) / (nPos + len(vocabulary))
+    negative = (textNeg.count(word)+1) / (nNeg + len(vocabulary))
+    wordProbs.update({word: [positive, negative]})
+estimate = []
+
+for row in range(x_test.shape[0]):
+    vPositive = probPos
+    vNegative = probNeg
+    for word in x_test.iloc[row].lower().split():
+        if word not in vocabulary:
+            continue
+        vPositive *= wordProbs[word][0]
+        vNegative *= wordProbs[word][1]
+    estimate.append('pos' if vPositive >= vNegative else 'neg')
+confusion_matrix = pd.DataFrame([[0, 0], [0, 0]], columns=['neg', 'pos'], index=['neg', 'pos'])
+
+for i in range(y_test.shape[0]):
+    confusion_matrix.loc[y_test.iloc[i], estimate[i]] += 1
+confusion_matrix
+tn, fp, fn, tp = confusion_matrix.loc['neg', 'neg'], confusion_matrix.loc['neg', 'pos'], \
+                confusion_matrix.loc['pos', 'neg'], confusion_matrix.loc['pos', 'pos']
+precision = tp / (tp + fp)
+recall = tn / (tp + fn)
+accuracy = (tp + tn) / (tp + tn + fp + fn)
+print("Precision: ", precision)
+print("Recall: ", recall)
+print("Accuracy: ", accuracy)
+from sklearn.feature_extraction.text import CountVectorizer
+from sklearn.naive_bayes import MultinomialNB
+from sklearn import metrics
+
+msg = pd.read_csv('./text_classification.csv')
+msg['lablenum'] = msg.label.map({'pos':1, 'neg':0})
+X = msg.Text
+Y = msg.lablenum
+
+x_train, x_test, y_train, y_test = train_test_split(X, Y)
+cv = CountVectorizer()
+xtrain_dtm = cv.fit_transform(x_train)
+xtest_dtm = cv.transform(x_test)
+print(cv.get_feature_names_out())
+data = pd.DataFrame(xtrain_dtm.toarray(), columns=cv.get_feature_names_out())
