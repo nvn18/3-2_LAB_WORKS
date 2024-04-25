@@ -1,0 +1,69 @@
+import pandas as pd
+
+# Create a DataFrame with your dataset
+data = pd.read_csv('play_tennis.csv')
+
+df = pd.DataFrame(data)
+display(df)
+# Calculate counts for 'Yes' and 'No'
+play_counts = df['play'].value_counts()
+
+# Function to calculate probability for a given feature
+def calculate_probability(feature):
+    probabilities = {}
+    for value in df[feature].unique():
+        counts = df[df[feature] == value]['play'].value_counts()
+        probabilities[value] = {
+            'Yes': counts.get('Yes', 0) / play_counts['Yes'],
+            'No': counts.get('No', 0) / play_counts['No']
+        }
+    return probabilities
+
+outlook_pro = calculate_probability('outlook')
+temp_pro  = calculate_probability('temp')
+humidity_pro  = calculate_probability('humidity')
+wind_pro  = calculate_probability('wind')
+play_c = pd.DataFrame(play_counts) 
+outlook = pd.DataFrame(outlook_pro)
+temp = pd.DataFrame(temp_pro)
+humidity = pd.DataFrame(humidity_pro)
+wind = pd.DataFrame(wind_pro)
+display(play_c)
+display(outlook)
+display(temp)
+display(humidity)
+display(wind)
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import LabelEncoder
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.metrics import (
+    accuracy_score,
+    confusion_matrix,
+    ConfusionMatrixDisplay,
+    f1_score,
+    classification_report
+)
+
+df = pd.DataFrame(data)
+df_numerical = pd.get_dummies(df[['outlook', 'temp', 'humidity', 'wind']])
+
+display(df_numerical)
+df_final = pd.concat([df_numerical, df['play']], axis=1)
+train_data, test_data = train_test_split(df_final,shuffle=False)
+X_train = train_data.drop('play', axis=1)
+y_train = train_data['play']
+
+X_test = test_data.drop('play', axis=1)
+y_test = test_data['play']
+model = DecisionTreeClassifier()
+model.fit(X_train, y_train)
+
+y_pred = model.predict(X_test)
+accuracy = accuracy_score(y_test, y_pred)
+print(f"Accuracy: {accuracy}")
+
+f1 = f1_score(y_pred,y_test,average='weighted')
+display(f1)
+display("the acutal values:",y_test)
+print("the predicted values:",y_pred)
