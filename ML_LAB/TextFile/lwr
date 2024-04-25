@@ -1,0 +1,39 @@
+from sklearn import datasets 
+import numpy as np
+from math import ceil
+from scipy import linalg
+from matplotlib import pyplot as plt
+import pandas as pd
+
+data = pd.read_csv('10-dataset.csv')
+x = data['total_bill'].values 
+y = data['tip'].values  
+def lowess(x, y, f, iterations):
+    n = len(x)
+    r = int(ceil(f * n))
+    h = [np.sort(np.abs(x - x[i]))[r] for i in range(n)]
+    w = np.clip(np.abs((x[:, None] - x[None, :]) / h), 0.0, 1.0)
+    w = (1 - w ** 3) ** 3
+    yest = np.zeros(n)
+    Δ = np.ones(n)
+    for iteration in range(iterations):
+        for i in range(n):
+            weights = Δ * w[:, i]
+            b = np.array([np.sum(weights * y), np.sum(weights * y * x)])
+            A = np.array([[np.sum(weights), np.sum(weights * x)],[np.sum(weights * x), np.sum(weights * x * x)]])
+            beta = linalg.solve(A, b)
+            yest[i] = beta[0] + beta[1] * x[i]
+
+        residuals = y - yest
+        s = np.median(np.abs(residuals))
+        Δ = np.clip(residuals / (6.0 * s), -1, 1)
+        Δ = (1 - Δ ** 2) ** 2
+    return yest
+
+f = 0.25
+iterations = 3
+yest = lowess(x, y, f, iterations)
+
+plt.plot(x, y, "r.", color='blue')
+plt.plot(x, yest, "b-", color='red')
+plt.show()
