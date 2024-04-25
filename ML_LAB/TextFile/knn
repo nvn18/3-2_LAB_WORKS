@@ -1,0 +1,31 @@
+import numpy as np
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import classification_report
+from sklearn import datasets
+from collections import Counter
+iris = datasets.load_iris()
+x_train, x_test, y_train, y_test = train_test_split(iris.data, iris.target, test_size=0.1)
+k = int(input("Enter the K value:"))
+y_pred = np.array([], dtype=int)
+
+for test in x_test:
+    dis = np.array([])
+    for train in x_train:
+        v = np.sqrt(sum([(test[i]-train[i])**2 for i in range(train.shape[0])]))
+        dis = np.append(dis, [v])
+    nearest_indices = np.argsort(dis)[:k]
+    nearest_labels = y_train[nearest_indices]
+    counter = Counter(nearest_labels)
+    most_common_label = counter.most_common(1)[0][0]
+    y_pred = np.append(y_pred, [most_common_label])
+confusion_matrix = pd.DataFrame([[0, 0, 0],[0, 0, 0], [0, 0, 0]], columns=[0, 1, 2], index=[0, 1, 2])
+correct = 0
+for i in range(y_test.shape[0]):
+    print(f"Sample: {x_test[i]}, Actual Label: {y_test[i]}, Predicted Label: {y_pred[i]}")
+    if y_test[i] == y_pred[i]: correct += 1
+    confusion_matrix.iloc[y_test[i], y_pred[i]] += 1
+
+print(f"{correct} number of correct classifications out of {y_pred.shape[0]}")
+print(confusion_matrix)
+print(classification_report(y_test, y_pred))
