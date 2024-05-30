@@ -1,0 +1,27 @@
+graph={'a':['b','c'],
+       'b':['d','e'],
+       'c':['f','g'],
+       'd':[3,5],
+       'e':[17,8],
+       'f':[-2,5],
+       'g':[-1,7]}
+def search(node,search_content):
+    if type(graph[node][0])==str:
+        v=[]
+        if search_content=='MAX':
+            for i in graph[node]:
+                v.append(search(i,'MIN'))
+            return max(v)
+        else:
+            for i in graph[node]:
+                v.append(search(i,'MAX'))
+            return min(v)
+    else:
+        if search_content=='MAX':
+            return max(graph[node])
+        else:
+            return min(graph[node])
+node = input("Enter the node in the graph")
+search_content = input("Enter the Content(MAX / MIN):")
+result = search(node,search_content)
+print("The Optimal Value in the Graph:",result)
